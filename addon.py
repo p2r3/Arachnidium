@@ -46,8 +46,28 @@ def start_gui():
   gui_root.tk.call("source", "theme/azure.tcl")
   gui_root.tk.call("set_theme", "light")
 
-  ttk.Label(frame_root, name="saved-label", text="Data saved: 0B", font=("Helvetica", 14)).pack()
-  ttk.Label(frame_root, name="used-label", text="Data used: 0B", font=("Helvetica", 14)).pack(pady=15)
+  stats_frame = ttk.Frame(frame_root)
+  stats_frame.pack(pady=(0, 15))
+
+  labels_frame = ttk.Frame(stats_frame)
+  labels_frame.pack(side="left", padx=(0, 10))
+
+  global saved_label_widget, used_label_widget
+  saved_label_widget = ttk.Label(labels_frame, text="Data saved: 0B", font=("Helvetica", 14))
+  saved_label_widget.pack(anchor="w")
+
+  used_label_widget = ttk.Label(labels_frame, text="Data used: 0B", font=("Helvetica", 14))
+  used_label_widget.pack(anchor="w", pady=(5, 0))
+
+  def reset_savings():
+    global data_saved, data_used
+    data_saved = 0
+    data_used = 0
+    saved_label_widget.config(text="Data saved: 0B")
+    used_label_widget.config(text="Data used: 0B")
+
+  reset_btn = ttk.Button(stats_frame, text="↻", width=3, command=reset_savings)
+  reset_btn.pack(side="right", fill="y", pady=2)
 
   tk_IMAGE_QUALITY = tk.IntVar(value=IMAGE_QUALITY)
   tk_FORCE_MAX_COMPRESSION = tk.BooleanVar(value=FORCE_MAX_COMPRESSION)
@@ -230,11 +250,12 @@ def count_savings(size_before: int, size_after: int) -> None:
   data_used_fmt = sizeof_fmt(data_used)
 
   if ENABLE_GUI:
-    global gui_root, frame_root
-    gui_root.after(0, lambda: {
-      frame_root.children["saved-label"].config(text=("Data saved: " + data_saved_fmt)),
-      frame_root.children["used-label"].config(text=("Data used: " + data_used_fmt))
-    })
+    global gui_root, saved_label_widget, used_label_widget
+    if "saved_label_widget" in globals() and saved_label_widget:
+      gui_root.after(0, lambda: {
+        saved_label_widget.config(text=("Data saved: " + data_saved_fmt)),
+        used_label_widget.config(text=("Data used: " + data_used_fmt))
+      })
 
   if ENABLE_DEBUG:
     print("JUST SAVED: ", sizeof_fmt(just_saved))
