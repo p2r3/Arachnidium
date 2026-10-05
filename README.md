@@ -14,9 +14,20 @@ Data-optimizing HTTP(S) proxy, powered by [mitmproxy](https://www.mitmproxy.org/
 
 If you run into issues, please make sure you've followed these steps carefully. Do your own troubleshooting first to make sure the issue isn't on your end (e.g. misconfigured network). Please do not message me personally asking for help - I sadly don't have the time (or patience) to be able to assist everyone, sorry.
 
+## Running with Docker
+
+Arachnidium can also run headless in Docker, which works on any x64 or ARM64 Linux machine (e.g. a Raspberry Pi) without installing Python or Bun:
+
+1. Download [`compose.yaml`](compose.yaml) (or clone this repository) and run `docker compose up -d`.
+2. Follow the setup above from step 3. For step 4, run `docker compose logs arachnidium` to see the WireGuard QR code.
+
+Your WireGuard keys and mitmproxy's certificate authority are kept in the `data` volume, so they survive updates. To change settings, place `defaults.json` next to `compose.yaml` and uncomment its line in `compose.yaml` (keep `ENABLE_GUI` set to `false`).
+
+To update, run `docker compose pull && docker compose up -d`. To build the image from source instead, run `docker compose up -d --build`.
+
 ## Configuration
 
-There are two ways to configure Arachnidium: via the graphical interface, or by editing `defaults.json`. Changes made in the GUI are not saved between restarts - for that, use the JSON file. If you want to run Arachnidium without the GUI, set `ENABLE_GUI` to `false` in `defaults.json`.
+There are two ways to configure Arachnidium: via the graphical interface, or by editing `defaults.json`. Changes made in the GUI are not saved between restarts - for that, use the JSON file. If you want to run Arachnidium without the GUI, set `ENABLE_GUI` to `false` in `defaults.json`, and the WireGuard QR code will be printed to the console instead.
 
 ## Running from source
 

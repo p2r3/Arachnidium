@@ -1,0 +1,17 @@
+services:
+  arachnidium:
+    image: ghcr.io/p2r3/arachnidium:latest
+    build: .
+    restart: unless-stopped
+    # Reaps the Bun API process that Arachnidium starts.
+    init: true
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - data:/data
+      # To change settings, uncomment this and edit defaults.json next to this
+      # file (keep ENABLE_GUI set to false).
+      # - ./defaults.json:/app/defaults.json:ro
+
+volumes:
+  data:

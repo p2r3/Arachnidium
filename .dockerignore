@@ -1,0 +1,11 @@
+# Only the files the Dockerfile copies are needed.
+*
+!pyproject.toml
+!uv.lock
+!.python-version
+!main.py
+!addon.py
+!defaults.json
+!bun-api/package.json
+!bun-api/bun.lock
+!bun-api/index.ts

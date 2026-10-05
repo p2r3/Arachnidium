@@ -449,6 +449,16 @@ Endpoint = {wan_ip}:51820"""
     # Write config to file
     with open("wireguard.cfg", "w") as config_file:
       config_file.write(config)
+    # Without the GUI, print the QR code to the console instead
+    if not ENABLE_GUI:
+      config_qr = qrcode.QRCode()
+      config_qr.add_data(config)
+      config_qr_text = io.StringIO()
+      config_qr.print_ascii(out=config_qr_text)
+      try:
+        print(config_qr_text.getvalue())
+      except UnicodeEncodeError:
+        print("Could not print WireGuard QR code, use `wireguard.cfg` instead.")
 
   # Download DNS blocklist
   global DNS_BLOCKLIST
