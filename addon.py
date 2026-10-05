@@ -103,9 +103,9 @@ def start_gui():
 
 speculative_cache = {}
 
-async def do_async_http_request(url: str):
-  async with aiohttp.ClientSession() as session:
-    async with session.get(url) as response:
+async def do_async_http_request(url: str, headers: mitmproxy.http.Headers):
+  async with aiohttp.ClientSession(headers=headers) as session:
+    async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as response:
       try:
         body = await response.read()
         return (body, response)
@@ -344,7 +344,7 @@ def response(flow: mitmproxy.http.HTTPFlow) -> None:
   if USE_SPECULATIVE_CACHE and not flow.is_replay:
     for link in speculated_links:
       if ENABLE_DEBUG: print("Caching", link)
-      task = asyncio.create_task(do_async_http_request(link))
+      task = asyncio.create_task(do_async_http_request(link, flow.request.headers))
       timestamp = time.time()
       if len(speculative_cache) >= SPECULATIVE_CACHE_MAX_ENTRIES:
         oldest_link = None
